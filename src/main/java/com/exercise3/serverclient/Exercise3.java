@@ -2,10 +2,6 @@ package com.exercise3.serverclient;
 
 import java.io.IOException;
 
-import com.exercise3.serverclient.ClientActor;
-import com.exercise3.serverclient.ServerActor;
-import com.exercise3.serverclient.SendToServer;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 
