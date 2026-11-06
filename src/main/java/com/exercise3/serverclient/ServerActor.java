@@ -1,10 +1,9 @@
 package com.exercise3.serverclient;
 
-import akka.actor.AbstractActorWithStash;
-import akka.actor.Props;
-import akka.actor.AbstractActor.Receive;
 import akka.actor.AbstractActor;
+import akka.actor.Props;
 import java.util.Map;
+
 
 
 import java.util.HashMap;
@@ -25,17 +24,29 @@ public class ServerActor extends AbstractActor{
 	@Override
 	public Receive createReceive() {
 		return receiveBuilder().match(NewAccount.class, this::onNewAccount)
-				.match(NewAccount.class, this::onNewAccount)	
+				.match(GetAccountRequest.class, this::onEmailRequest)	
 				.build();
 	}
 
-	void onNewAccount(NewAccount info) {
+	private void onNewAccount(NewAccount info) {
 		this.emailByName.put(info.name, info.email);
+		
+		System.out.println("\n[SERVER] New account added!");
+		System.out.println("\n[SERVER] CURRENT ACCOUNTS:");
+		emailByName.forEach((name, email) ->
+		    System.out.println("[SERVER] " +name + " -> " + email)
+		);
+
 	}
 	
-	GetAccountResponse onEmailRequest(GetAccountRequest request) {
+	private void onEmailRequest(GetAccountRequest request) {
+		
 		String email = this.emailByName.get(request.name);
-		return (new GetAccountResponse(email));
+		
+		GetAccountResponse response = new GetAccountResponse(email);
+		
+		// Send the response back to the original sender
+		getSender().tell(response, getSelf());
 	}
 
 }

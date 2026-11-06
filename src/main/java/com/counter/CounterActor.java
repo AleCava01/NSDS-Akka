@@ -22,8 +22,7 @@ public class CounterActor extends AbstractActor {
 		System.out.println("Counter increased to " + counter);
 	}
 	void onOtherMessage(OtherMessage msg) {
-		--counter;
-		System.out.println("Counter decreased to " + counter);
+		System.out.println("OtherMessage received");
 	}
 	static Props props() {
 		return Props.create(CounterActor.class);
