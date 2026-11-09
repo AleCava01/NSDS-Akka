@@ -1,7 +1,10 @@
 package com.lab.evaluation26;
 
+import java.util.concurrent.TimeUnit;
+
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import scala.concurrent.duration.Duration;
 
 
 public class CounterWorkerActor extends AbstractActor {
@@ -33,7 +36,7 @@ public class CounterWorkerActor extends AbstractActor {
 		// sends the report back
 		System.out.println("[WORKER + " + workerId + " - "+ getSelf() +"] Received a report request!");
 		
-		getSender().tell(new ReturnMsg(count, sum), getSelf());
+		ReturnMsg message = new ReturnMsg(count, sum);
 		
 		if(msg.isReset()) {
 			this.count = 0;
@@ -41,7 +44,18 @@ public class CounterWorkerActor extends AbstractActor {
 			System.out.println("[WORKER] I resetted.");
 		}
 		
+		// waiting logic: just one second
+		int delay = 1;
+		getContext().getSystem().scheduler().scheduleOnce(
+		        Duration.create(delay, TimeUnit.SECONDS),
+		        getSender(),
+		        message,
+		        getContext().dispatcher(),
+		        getSelf()
+		    );
+
 		
+			
 	}
 	public void processRecord(RecordMsg msg) {
 				// process record
